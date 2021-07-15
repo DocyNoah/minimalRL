@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
-
+import wandb
 
 # Hyperparameters
 learning_rate = 0.0002
@@ -35,18 +35,24 @@ class Policy(nn.Module):
         self.data.append(item)
 
     def train_net(self):
-        R = 0
+        R = 0  # expected reward : sigma_{t:0~T} gamma^{t} * r_{t}
         self.optimizer.zero_grad()
         for r, prob in self.data[::-1]:
             R = r + gamma * R
             loss = -torch.log(prob) * R
             loss.backward()
         self.optimizer.step()
+
         self.data = []
+
+        return loss
 
 
 def main():
-    # Config the model and env
+    # wandb init
+    wandb.init(project="minimalrl")
+
+    # Make the model and env
     env = gym.make('CartPole-v1')
     # https://github.com/openai/gym/blob/master/gym/envs/classic_control/cartpole.py
     """
@@ -65,10 +71,11 @@ def main():
     """
     pi = Policy()
     score = 0.0
-    step_len = 0
-    print_interval = 100
+    sum_score = 0.0
+    sum_loss = 0.0
+    print_interval = 50
 
-    for n_epi in range(2000):
+    for n_epi in range(3000):
         s = env.reset()
         done = False
 
@@ -78,27 +85,45 @@ def main():
             m = Categorical(prob)
             a = m.sample()  # get action from prob
             s_prime, r, done, info = env.step(a.item())
-            r = r * ((2.4-abs(s_prime[0])) / 2.4)  # center weighted reward
-            pi.put_data((r, prob[a]))
+            r = r * ((2.4 - abs(s_prime[0])) / 2.4)  # center weighted reward
+            pi.put_data((r, prob[a]))  # log the history of a episode
             s = s_prime
             score += r
-            step_len += 1
 
         # Train for each episode
-        pi.train_net()
+        loss = pi.train_net()
 
-        # Verbose
+        sum_score += score
+        sum_loss += loss
+
+        score = 0.0
+
         if n_epi % print_interval == 0 and n_epi != 0:
-            print("# of episode : {:4}, avg score : {:4.2f}, avg step len : {:4.2f}"
-                  .format(n_epi, score / print_interval, step_len / print_interval))
+            avg_score = sum_score / print_interval
+            avg_loss = sum_loss / print_interval
+
+            # wandb log
+            wandb.log(
+                data={
+                    "avg_score": avg_score,
+                    "avg_loss": avg_loss
+                },
+                step=n_epi
+            )
+
+            # verbose
+            print("# of episode : {:4}, avg score : {:4.2f}, avg loss : {:4f}"
+                  .format(n_epi, avg_score, avg_loss))
 
             # early stopping
-            if score / print_interval > 350.:
-                break
-            score = 0.0
-            step_len = 0
+            # if avg_score > 350.:
+            #     break
+
+            sum_score = 0.0
+            sum_loss = 0.0
 
     # Visualize
+    print("Graphic visualize")
     for _ in range(10):
         s = env.reset()
         for __ in range(500):
@@ -111,6 +136,8 @@ def main():
                 break
 
     env.close()
+
+    print("Done!")
 
 
 if __name__ == '__main__':
