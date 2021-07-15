@@ -12,21 +12,28 @@ n_rollout = 10
 
 
 class ActorCritic(nn.Module):
+    # layer and member
     def __init__(self):
         super(ActorCritic, self).__init__()
         self.data = []
 
-        self.fc1 = nn.Linear(4, 256)
-        self.fc_pi = nn.Linear(256, 2)
-        self.fc_v = nn.Linear(256, 1)
+        # CartPole-v1 observation space : 4
+        hidden_nodes = 256
+        self.fc1 = nn.Linear(4, hidden_nodes)
+        self.fc_pi = nn.Linear(hidden_nodes, 2)  # actor: action space : 2
+        self.fc_v = nn.Linear(hidden_nodes, 1)  # critic: reward : 1
+
         self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
 
+    # no forward()
+    # actor network
     def pi(self, x, softmax_dim=0):
         x = F.relu(self.fc1(x))
         x = self.fc_pi(x)
         prob = F.softmax(x, dim=softmax_dim)
         return prob
 
+    # critic network
     def v(self, x):
         x = F.relu(self.fc1(x))
         v = self.fc_v(x)
@@ -46,12 +53,14 @@ class ActorCritic(nn.Module):
             done_mask = 0.0 if done else 1.0
             done_lst.append([done_mask])
 
-        s_batch, a_batch, r_batch, s_prime_batch, done_batch = torch.tensor(s_lst, dtype=torch.float), torch.tensor(
-            a_lst), \
-                                                               torch.tensor(r_lst, dtype=torch.float), torch.tensor(
-            s_prime_lst, dtype=torch.float), \
-                                                               torch.tensor(done_lst, dtype=torch.float)
+        s_batch = torch.tensor(s_lst, dtype=torch.float)
+        a_batch = torch.tensor(a_lst)
+        r_batch = torch.tensor(r_lst, dtype=torch.float)
+        s_prime_batch = torch.tensor(s_prime_lst, dtype=torch.float)
+        done_batch = torch.tensor(done_lst, dtype=torch.float)
+
         self.data = []
+
         return s_batch, a_batch, r_batch, s_prime_batch, done_batch
 
     def train_net(self):
