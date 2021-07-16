@@ -35,17 +35,24 @@ class Policy(nn.Module):
         self.data.append(item)
 
     def train_net(self):
-        R = 0  # expected reward : sigma_{t:0~T} gamma^{t} * r_{t}
+        # loss = sigma_{t:_0~T} [ log(prob(a_{t}|s_{t}) * R ]
+        # https://www.dropbox.com/s/tnym8ojximni2l2/RL-5_Policy_Gradient_REINFORCE.pdf
+
+        R = 0  # expected return : sigma_{t:0~T} gamma^{t} * r_{t}
         self.optimizer.zero_grad()
+
+        epi_loss = 0
         for r, prob in self.data[::-1]:
             R = r + gamma * R
-            loss = -torch.log(prob) * R
+            loss = -torch.log(prob) * R  # -expeted value
             loss.backward()
+            epi_loss += loss
+
         self.optimizer.step()
 
         self.data = []
 
-        return loss
+        return epi_loss
 
 
 def main():
