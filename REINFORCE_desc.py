@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
 import wandb
+from utils import current_time
 
 # Hyperparameters
 learning_rate = 0.0002
@@ -58,6 +59,8 @@ class Policy(nn.Module):
 def main():
     # wandb init
     wandb.init(project="minimalrl")
+    wandb.run.name = "REINFORCE_{}".format(current_time())
+    # wandb.run.save()
 
     # Make the model and env
     env = gym.make('CartPole-v1')
