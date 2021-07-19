@@ -30,6 +30,7 @@ class Policy(nn.Module):
     def forward(self, x):  # __call__()
         x = F.relu(self.fc1(x))
         x = F.softmax(self.fc2(x), dim=0)
+
         return x
 
     def put_data(self, item):
@@ -80,6 +81,7 @@ def main():
         1     Push cart to the right
     """
     pi = Policy()
+
     score = 0.0
     sum_score = 0.0
     sum_loss = 0.0
@@ -93,8 +95,8 @@ def main():
         while not done:  # CartPole-v1 forced to terminates at 500 step.
             prob = pi(torch.from_numpy(s).float())  # prob = pi(s)
             m = Categorical(prob)
-            a = m.sample()  # get action from prob
-            s_prime, r, done, info = env.step(a.item())
+            a = m.sample().item()  # get action from prob
+            s_prime, r, done, info = env.step(a)
             r = r * ((2.4 - abs(s_prime[0])) / 2.4)  # center weighted reward
             pi.put_data((r, prob[a]))  # log the history of a episode
             s = s_prime
@@ -108,6 +110,7 @@ def main():
 
         score = 0.0
 
+        # Print stat
         if n_epi % print_interval == 0 and n_epi != 0:
             avg_score = sum_score / print_interval
             avg_loss = sum_loss / print_interval
@@ -140,8 +143,8 @@ def main():
             env.render()
             prob = pi(torch.from_numpy(s).float())  # prob = pi(s)
             m = Categorical(prob)
-            a = m.sample()  # get action from prob
-            s, r, done, info = env.step(a.item())
+            a = m.sample().item()  # get action from prob
+            s, r, done, info = env.step(a)
             if done:
                 break
 
