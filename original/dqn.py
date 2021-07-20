@@ -14,7 +14,7 @@ buffer_limit = 50000
 batch_size = 32
 
 
-class ReplayBuffer():
+class ReplayBuffer:
     def __init__(self):
         self.buffer = collections.deque(maxlen=buffer_limit)
 
