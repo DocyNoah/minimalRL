@@ -93,7 +93,8 @@ def main():
 
         # one episode
         while not done:  # CartPole-v1 forced to terminates at 500 step.
-            prob = pi(torch.from_numpy(s).float())  # prob = pi(s)
+            s_ = torch.from_numpy(s).float()
+            prob = pi(s_)
             m = Categorical(prob)
             a = m.sample().item()  # get action from prob
             s_prime, r, done, info = env.step(a)
@@ -129,8 +130,8 @@ def main():
                   .format(n_epi, avg_score, avg_loss))
 
             # early stopping
-            # if avg_score > 350.:
-            #     break
+            if avg_score > 300.:
+                break
 
             sum_score = 0.0
             sum_loss = 0.0
@@ -142,8 +143,7 @@ def main():
         for __ in range(500):
             env.render()
             prob = pi(torch.from_numpy(s).float())  # prob = pi(s)
-            m = Categorical(prob)
-            a = m.sample().item()  # get action from prob
+            a = prob.argmax().item()  # do the best action from prob
             s, r, done, info = env.step(a)
             if done:
                 break
