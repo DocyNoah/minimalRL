@@ -1,4 +1,6 @@
 pytorch
 numpy
 gym
+gym-atari
+atari_py
 wandb

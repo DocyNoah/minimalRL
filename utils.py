@@ -32,3 +32,9 @@ def print_value(value):
 # ex) yy-mm-dd/hh:mm:ss
 def current_time():
     return time.strftime('%y-%m-%d/%X', time.localtime(time.time()))
+
+
+def overview_env(env):
+    print_value(env.action_space)
+    print_value(env.get_action_meanings())
+    print_value(env.observation_space.shape)
