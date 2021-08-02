@@ -1,5 +1,4 @@
 import gym
-import atari_py  # must import
 import gym.wrappers as wrappers
 import collections
 import random
@@ -10,9 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-import wandb
-import utils
-from utils import current_time
+from common import utils
 
 # Hyperparameters
 learning_rate = 0.005
@@ -74,7 +71,7 @@ class Qnet(nn.Module):
         )
 
         conv_out_size = self._get_conv_out(input_shape)
-        utils.print_value(conv_out_size)
+        utils.printv(conv_out_size)
 
         self.fc = nn.Sequential(
             nn.Linear(conv_out_size, 512),

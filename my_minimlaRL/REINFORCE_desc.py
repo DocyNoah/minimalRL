@@ -1,11 +1,13 @@
 import gym
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
+
 import wandb
-from utils import current_time
+from common.utils import current_time
 
 # Hyperparameters
 learning_rate = 0.0002

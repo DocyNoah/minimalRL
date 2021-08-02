@@ -16,7 +16,7 @@ def print_shape(*tensors):
         print("# {0}.shape: {1}".format(arg_name, tensors[idx].shape))
 
 
-def print_value(value):
+def printv(value):
     this_function_name = inspect.currentframe().f_code.co_name
     lcls = inspect.stack()
     outer = re.compile("\((.+)\)")
@@ -35,6 +35,6 @@ def current_time():
 
 
 def overview_env(env):
-    print_value(env.action_space)
-    print_value(env.get_action_meanings())
-    print_value(env.observation_space.shape)
+    printv(env.action_space)
+    printv(env.get_action_meanings())
+    printv(env.observation_space.shape)

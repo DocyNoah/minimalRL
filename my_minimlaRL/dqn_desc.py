@@ -8,8 +8,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 import wandb
-import utils
-from utils import current_time
+from common import utils
+from common.utils import current_time
 
 # Hyperparameters
 learning_rate = 0.0005

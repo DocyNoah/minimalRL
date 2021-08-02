@@ -1,12 +1,13 @@
 import gym
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
+
 import wandb
-import utils
-from utils import current_time
+from common.utils import current_time
 
 # Hyperparameters
 learning_rate = 0.0002
@@ -94,8 +95,8 @@ class ActorCritic(nn.Module):
 
 def main():
     # wandb init
-    wandb.init(project="minimalrl")
-    wandb.run.name = "ActorCritic_{}".format(current_time())
+    # wandb.init(project="minimalrl")
+    # wandb.run.name = "ActorCritic_{}".format(current_time())
 
     # Make the model and env
     env = gym.make('CartPole-v1')
@@ -120,11 +121,11 @@ def main():
                 s_prime, r, done, info = env.step(a)
                 model.put_data((s, a, r, s_prime, done))
 
-                s = s_prime
-                score += r
+            s = s_prime
+            score += r
 
-                if done:
-                    break
+            # if done:
+            #     break
 
             # Train for each rollout
             actor_loss, critic_loss = model.train_net()
@@ -142,15 +143,15 @@ def main():
             avg_actor_loss = sum_actor_loss / print_interval
             avg_critic_loss = sum_critic_loss / print_interval
 
-            # wandb log
-            wandb.log(
-                data={
-                    "avg_score": avg_score,
-                    "avg_actor_loss": avg_actor_loss,
-                    "avg_critic_loss": avg_critic_loss
-                },
-                step=n_epi
-            )
+            # # wandb log
+            # wandb.log(
+            #     data={
+            #         "avg_score": avg_score,
+            #         "avg_actor_loss": avg_actor_loss,
+            #         "avg_critic_loss": avg_critic_loss
+            #     },
+            #     step=n_epi
+            # )
 
             # verbose
             print("# of episode :{:4}, avg score : {:4.1f}, "
