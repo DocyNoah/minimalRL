@@ -15,12 +15,12 @@ from common.utils import printv
 from common import atari_wrappers, atari_wrappers_ex
 
 # Hyperparameters
-learning_rate = 0.0001
-gamma = 0.98
-buffer_limit = 10000
+learning_rate = 0.00001
+gamma = 0.99
+buffer_limit = 100000
 batch_size = 32
 device = torch.device("cuda:1") if torch.cuda.is_available() else torch.device("cpu")
-device = torch.device("cpu")
+# device = torch.device("cpu")
 
 
 class ReplayBuffer:
@@ -234,11 +234,12 @@ def main():
 
     memory = ReplayBuffer()
 
-    print_interval = 5
+    print_interval = 1
     update_interval = 20  # q_target_update_interval
+    train_interval = 1000
     render_interval = 5
-    epoch = 30000
-    epsilon = 0.99
+    epoch = 10000
+    epsilon = 1.00
     eps_decay = 0.99
     eps_min = 0.02
 
@@ -295,8 +296,8 @@ def main():
 
                 break
 
-        if memory.size() > 2000:
-            train(q, q_target, memory, optimizer)
+            if memory.size() > 5000 and r != 0:
+                train(q, q_target, memory, optimizer)
 
         # Update q_target
         if n_epi % update_interval == 0:
@@ -312,14 +313,15 @@ def main():
             # wandb log
             # wandb.log(
             #     data={
-            #         "episode_reward": episode_reward
+            #         "Episode Reward": episode_reward,
+            #         "100 Reward": mean_reward
             #     },
-            #     step=n_epi
+            #     step=step
             # )
 
             # verbose
-            print("step : {}, episode : {}, episode reward : {:.1f}, 100 reward : {:.2f}, "
-                  "buffer : {}, epsilon : {:.2f}%, elapsed time : {}s"
+            print("Step : {:6}, Episode : {:4}, Episode Reward : {:.1f}, 100 Reward : {:.2f}, "
+                  "Buffer : {}, Epsilon : {:.2f}%, Elapsed Time : {}s"
                   .format(step, n_epi, interval_reward, mean_reward, memory.size(),
                           epsilon * 100, elapsed_time))
 
