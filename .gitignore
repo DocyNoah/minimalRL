@@ -6,3 +6,4 @@ wandb/
 
 # etc
 test_codes/
+*.dat
