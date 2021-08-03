@@ -49,7 +49,7 @@ class DQN(nn.Module):
 
         coin = random.random()
         if coin < epsilon:
-            return random.randint(0, 1)
+            return random.randint(0, 1)  # n_action으로 바꿔야 함
         else:
             out = self.forward(state)
             return out.argmax().item()
