@@ -15,12 +15,13 @@ from common.utils import printv
 from common import atari_wrappers, atari_wrappers_ex
 
 # Hyperparameters
-learning_rate = 0.00001
+learning_rate = 0.00002
 gamma = 0.99
 buffer_limit = 100000
 batch_size = 32
 device = torch.device("cuda:1") if torch.cuda.is_available() else torch.device("cpu")
 # device = torch.device("cpu")
+print(device)
 
 
 class ReplayBuffer:
@@ -240,8 +241,9 @@ def main():
     render_interval = 5
     epoch = 10000
     epsilon = 1.00
-    eps_decay = 0.99
+    eps_decay = 0.995
     eps_min = 0.02
+    k=10
 
     optimizer = optim.Adam(q.parameters(), lr=learning_rate)
 
@@ -297,7 +299,8 @@ def main():
                 break
 
             if memory.size() > 5000 and r != 0:
-                train(q, q_target, memory, optimizer)
+                for _ in range(k):
+                    train(q, q_target, memory, optimizer)
 
         # Update q_target
         if n_epi % update_interval == 0:

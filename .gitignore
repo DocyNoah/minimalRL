@@ -7,3 +7,4 @@ wandb/
 # etc
 test_codes/
 *.dat
+dummy/

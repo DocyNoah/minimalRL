@@ -13,19 +13,20 @@ t5 = torch.randn(1, 2).to(device1)
 
 t4 = torch.randn(1, 2).cuda(1)
 
-print(t1)  # tensor([[-0.2678,  1.9252]])
-print(t2)  # tensor([[ 0.5117, -3.6247]], device='cuda:0')
-print(t3)  # tensor([[ 0.5117, -3.6247]], device='cuda:0')
-print(t4)
+print("t1 :", t1)  # tensor([[-0.2678,  1.9252]])
+print("t2 :", t2)  # tensor([[ 0.5117, -3.6247]], device='cuda:0')
+print("t3 :", t3)  # tensor([[ 0.5117, -3.6247]], device='cuda:0')
+print("t4 :", t4)
+print("t5 :", t5)
 
 t1.to(device0)
 
-print(t1)  # tensor([[-0.2678,  1.9252]])
+print("t1 :", t1)  # tensor([[-0.2678,  1.9252]])
 print(t1.is_cuda)  # False
 
 t1 = t1.to(device0)
 
-print(t1)  # tensor([[-0.2678,  1.9252]], device='cuda:0')
+print("t1 :", t1)  # tensor([[-0.2678,  1.9252]], device='cuda:0')
 print(t1.is_cuda)  # True
 
 
@@ -45,3 +46,7 @@ print(next(model.parameters()).is_cuda)  # True
 
 printv(device0)
 printv(device1)
+
+# tensors = []
+# while True:
+#     tensors.append(torch.rand(10, 10).to(device1))

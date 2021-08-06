@@ -53,7 +53,7 @@ class ActorCritic(nn.Module):
         return action
 
     def remember(self, state, action, reward, state_next, done, info):
-        self.memory.put((state, action, reward, state_next, done))
+        self.memory.append((state, action, reward, state_next, done))
 
     def train(self):
         state, action, reward, state_next, done = self.memory.make_batch()

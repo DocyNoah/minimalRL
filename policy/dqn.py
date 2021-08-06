@@ -59,7 +59,7 @@ class DQN(nn.Module):
         return out.argmax().item()
 
     def remember(self, state, action, reward, state_next, done, info):
-        self.memory.put((state, action, reward / 100.0, state_next, done))
+        self.memory.append((state, action, reward / 100.0, state_next, done))
 
     def train(self, batch_size=32):
         if self.memory.size() < 2000:

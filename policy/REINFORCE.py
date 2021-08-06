@@ -41,7 +41,7 @@ class REINFORCE(nn.Module):
         return action
 
     def remember(self, state, action, reward, state_next, done, info):
-        self.memory.put((reward, self.prob[action]))
+        self.memory.append((reward, self.prob[action]))
 
     def train(self):
         '''

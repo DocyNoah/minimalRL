@@ -73,7 +73,7 @@ class PlayGround:
                 mean_loss = interval_loss / print_interval
                 recent_reward = np.mean(total_reward[-100:])
                 elapsed_time = time.time() - start_time
-                elapsed_time = time.strftime('%S', time.localtime(elapsed_time))
+                elapsed_time = time.strftime('%S', time.gmtime(elapsed_time))
 
                 # wandb log
                 wandb.log(
@@ -85,7 +85,6 @@ class PlayGround:
                     step=train_step
                 )
 
-                # verbose
                 print("step : {:5},".format(step),
                       "episode : {:4},".format(n_epi),
                       "episode_reward : {:.2f},".format(mean_reward),
