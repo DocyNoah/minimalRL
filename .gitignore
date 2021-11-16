@@ -1,5 +1,6 @@
 # Pycharm
 .idea/
+__pycache__/
 
 # wandb
 wandb/
@@ -7,4 +8,5 @@ wandb/
 # etc
 test_codes/
 *.dat
+output_data/
 dummy/

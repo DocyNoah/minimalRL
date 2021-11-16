@@ -61,7 +61,8 @@ def seed_everything(env, seed: int = 42):
 
 
 def seed_test(env, device=torch.device("cpu")):
-    print(device)
+    print("device:", device)
+
     import warnings
     warnings.filterwarnings(action='ignore')
 
@@ -107,8 +108,6 @@ def seed_test(env, device=torch.device("cpu")):
     print("np.random.rand() :", np.random.rand())
     print("torch.rand(1) :", torch.rand(1))
 
-    print()
-
     for i in range(100):
         x = torch.rand(4)
         x = torch.tensor(x, requires_grad=True)
@@ -119,8 +118,9 @@ def seed_test(env, device=torch.device("cpu")):
     print("model(x) :", model(x))
     print("loss :", loss)
 
-    print(np.random.choice(100, 7, replace=False))
+    print("np.random.choice(100, 7, replace=False)", np.random.choice(100, 7, replace=False))
 
+    print("env.action_space.sample():", end=" ")
     env.reset()
     for _ in range(10):
         env.reset()

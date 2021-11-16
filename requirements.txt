@@ -3,3 +3,4 @@ numpy
 gym
 gym-atari
 wandb
+gym-box2d
