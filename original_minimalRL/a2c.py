@@ -16,6 +16,7 @@ gamma = 0.98
 max_train_steps = 60000
 PRINT_INTERVAL = update_interval * 100
 
+
 class ActorCritic(nn.Module):
     def __init__(self):
         super(ActorCritic, self).__init__()
@@ -33,6 +34,7 @@ class ActorCritic(nn.Module):
         x = F.relu(self.fc1(x))
         v = self.fc_v(x)
         return v
+
 
 def worker(worker_id, master_end, worker_end):
     master_end.close()  # Forbid worker to use the master end for messaging
@@ -59,6 +61,7 @@ def worker(worker_id, master_end, worker_end):
             worker_end.send((env.observation_space, env.action_space))
         else:
             raise NotImplementedError
+
 
 class ParallelEnv:
     def __init__(self, n_train_processes):
@@ -112,6 +115,7 @@ class ParallelEnv:
             worker.join()
             self.closed = True
 
+
 def test(step_idx, model):
     env = gym.make('CartPole-v1')
     score = 0.0
@@ -131,6 +135,7 @@ def test(step_idx, model):
 
     env.close()
 
+
 def compute_target(v_final, r_lst, mask_lst):
     G = v_final.reshape(-1)
     td_target = list()
@@ -141,7 +146,8 @@ def compute_target(v_final, r_lst, mask_lst):
 
     return torch.tensor(td_target[::-1]).float()
 
-if __name__ == '__main__':
+
+def main():
     envs = ParallelEnv(n_train_processes)
 
     model = ActorCritic()
@@ -186,3 +192,7 @@ if __name__ == '__main__':
             test(step_idx, model)
 
     envs.close()
+
+
+if __name__ == '__main__':
+    main()
